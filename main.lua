@@ -1,20 +1,37 @@
 function love.load()
-    x = 100
-    y = 50
+    Object = require "classic"
+    require "player"
+    require "enemy"
+    require "bullet"
+
+    player = Player()
+    enemy = Enemy()
+    listOfBullets = {}
 end
 
 function love.update(dt)
-    if love.keyboard.isDown("right") then
-        x = x + 100 * dt
-    elseif love.keyboard.isDown("left") then
-        x = x - 100 * dt
-    elseif love.keyboard.isDown("up") then
-        y = y - 100 * dt
-    elseif love.keyboard.isDown("down") then
-        y = y + 100 * dt
+    player:update(dt)
+    enemy:update(dt)
+
+    for i,v in ipairs(listOfBullets) do
+        v:update(dt)
+        v:checkCollision(enemy)
+
+        if v.dead then
+            table.remove(listOfBullets, i)
+        end
     end
 end
 
 function love.draw()
-    love.graphics.rectangle("line", x, y, 200, 150)
+    player:draw()
+    enemy:draw()
+
+    for i,v in ipairs(listOfBullets) do
+        v:draw()
+    end
+end
+
+function love.keypressed(key)
+    player:keypressed(key)
 end
